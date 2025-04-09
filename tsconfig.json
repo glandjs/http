@@ -1,0 +1,43 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "CommonJS",
+    "strict": true,
+    "esModuleInterop": true,
+    "removeComments": true,
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "strictNullChecks": true,
+    "forceConsistentCasingInFileNames": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "useUnknownInCatchVariables": false,
+    "allowJs": false,
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "rootDir": ".",
+    "baseUrl": ".",
+    "types": ["node"],
+    "paths": {
+      "@glandjs/http": ["./packages/http"],
+      "@glandjs/http/*": ["./packages/http/*"],
+
+      "@glandjs/express": ["./packages/express"],
+      "@glandjs/express/*": ["./packages/express/*"],
+
+      "@glandjs/fastify": ["./packages/fastify"],
+      "@glandjs/fastify/*": ["./packages/fastify/*"]
+    },
+    "noImplicitAny": false,
+    "noUnusedLocals": false,
+    "strictPropertyInitialization": false,
+    "noLib": false
+  },
+  "include": ["packages/**/*", "test/**/*", "examples/**/*"],
+  "compileOnSave": true,
+  "buildOnSave": true,
+  "preserveSymlinks": true,
+  "exclude": ["node_modules"]
+}

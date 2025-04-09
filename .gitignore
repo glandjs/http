@@ -1,0 +1,20 @@
+packages/*/package-lock.json
+
+# dependencies
+node_modules/
+
+# bundle
+packages/**/**/*.d.ts
+packages/**/**/*.js
+
+# Environment variables
+.env
+
+# misc
+.DS_Store
+.idea/
+.vscode/
+/packages/**/.npmignore
+/packages/**/LICENSE
+
+bin/*
