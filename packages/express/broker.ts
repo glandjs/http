@@ -1,5 +1,5 @@
 import { HttpBroker, type HttpApplicationOptions } from '@glandjs/http'
-import { ExpressCore } from './express-core'
+import { ExpressCore } from './core'
 
 export class ExpressBroker extends HttpBroker<
   ExpressCore,

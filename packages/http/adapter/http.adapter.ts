@@ -18,7 +18,23 @@ export abstract class HttpServerAdapter<TServer, TAapp, TRequest, TResponse> {
     hostname?: string,
     message?: string
   ): void
-  public abstract close(): Promise<void>
+  public async close(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (!this.server) {
+        resolve()
+        return
+      }
+
+      ;(this.server as any).close((err) => {
+        if (err) {
+          reject(err)
+          return
+        }
+        this.logger.info('Express server closed')
+        resolve()
+      })
+    })
+  }
   public abstract use(...args: any): any
   public abstract registerRoute(
     method: string,

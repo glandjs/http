@@ -4,7 +4,7 @@ import {
   ServerFactory,
   type HttpApplicationOptions,
 } from '@glandjs/http'
-import type { CorsConfig } from '@glandjs/http/types'
+import type { CorsConfig, RouteAction } from '@glandjs/http/types'
 import { isNil, isObject, isString } from '@medishn/toolkit'
 import express, { type Application, type Request, type Response } from 'express'
 import { normalizePath } from '@glandjs/common'
@@ -53,24 +53,6 @@ export class ExpressAdapter extends HttpServerAdapter<
     } catch (error) {
       this.handleError(error, 'Failed to start Express server')
     }
-  }
-
-  public async close(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      if (!this.server) {
-        resolve()
-        return
-      }
-
-      this.server.close((err) => {
-        if (err) {
-          reject(err)
-          return
-        }
-        this.logger.info('Express server closed')
-        resolve()
-      })
-    })
   }
 
   public reply(response: any, body: any, statusCode?: number): any {
@@ -131,7 +113,7 @@ export class ExpressAdapter extends HttpServerAdapter<
 
     return this.instance.use(...wrapped)
   }
-  public registerRoute(method: string, path: string, action: Function): void {
+  public registerRoute(method: string, path: string, action: RouteAction<Request,Response>): void {
     const normalizedPath = normalizePath(path)
 
     this.instance[method.toLowerCase()](
