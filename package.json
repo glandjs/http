@@ -16,7 +16,10 @@
     "release": "pnpm build && pnpm changeset publish",
     "release:alpha": "pnpm changeset publish --tag alpha",
     "clean": "rm -rf packages/**/**/**/*.d.ts packages/**/**/*.d.ts packages/**/*.d.ts packages/**/**/**/*.js packages/**/**/*.js packages/**/*.js ",
-    "build": "pnpm -r build"
+    "build:http": "pnpm --filter @glandjs/http... build",
+    "build:express": "pnpm --filter @glandjs/express... build",
+    "build:fastify": "pnpm --filter @glandjs/fastify... build",
+    "build": "pnpm run build:http && pnpm run build:express && pnpm run build:fastify"
   },
   "lint-staged": {
     "**/*.ts": "prettier --ignore-path ./.prettierignore --write"
