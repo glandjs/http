@@ -1,8 +1,33 @@
 {
   "name": "@glandjs/http",
   "version": "1.0.0-alpha",
-  "author": "Mahdi",
+  "description": "A protocol adapter for HTTP built on top of the Gland architecture solution.",
+  "author": {
+    "name": "Mahdi",
+    "url": "https://github.com/m-mdy-m"
+  },
   "license": "MIT",
+  "homepage": "https://github.com/glandjs/http#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/glandjs/http.git",
+    "directory": "packages/http"
+  },
+  "bugs": {
+    "url": "https://github.com/glandjs/http/issues"
+  },
+  "keywords": [
+    "gland",
+    "http",
+    "express",
+    "adapter",
+    "protocol",
+    "framework",
+    "typescript",
+    "architecture",
+    "event-driven",
+    "glandjs"
+  ],
   "engines": {
     "node": ">= 20"
   },
@@ -13,17 +38,17 @@
     "access": "public"
   },
   "dependencies": {
-    "@glandjs/core": "workspace:*",
-    "@glandjs/events": "workspace:*",
+    "@glandjs/core": "1.0.1-alpha",
+    "@glandjs/events": "1.0.1-alpha",
     "@medishn/toolkit": "^1.0.3",
     "tslib": "2.8.1"
   },
   "devDependencies": {
-    "@glandjs/common": "workspace:*",
+    "@glandjs/common": "1.0.1-alpha",
     "typescript": "^5.5.4"
   },
   "peerDependencies": {
-    "@glandjs/common": "workspace:*",
+    "@glandjs/common": "1.0.1-alpha",
     "reflect-metadata": "^0.1.12"
   }
 }

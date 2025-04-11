@@ -1,8 +1,35 @@
 {
   "name": "@glandjs/express",
   "version": "1.0.0-alpha",
-  "author": "Mahdi",
+  "description": "An Express adapter for Gland HTTP protocol layer, enabling classic middleware-based routing within the Gland architecture solution.",
+  "author": {
+    "name": "Mahdi",
+    "url": "https://github.com/m-mdy-m"
+  },
   "license": "MIT",
+  "homepage": "https://github.com/glandjs/http#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/glandjs/http.git",
+    "directory": "packages/express"
+  },
+  "bugs": {
+    "url": "https://github.com/glandjs/http/issues"
+  },
+  "keywords": [
+    "gland",
+    "glandjs",
+    "express",
+    "http",
+    "adapter",
+    "middleware",
+    "protocol",
+    "framework",
+    "typescript",
+    "event-driven",
+    "architecture",
+    "express-adapter"
+  ],
   "engines": {
     "node": ">= 20"
   },
@@ -15,20 +42,20 @@
   "dependencies": {
     "express": "^5.1.0",
     "cors": "^2.8.5",
-    "@glandjs/events": "workspace:*",
     "@glandjs/http": "workspace:*",
-    "@glandjs/core": "workspace:*",
+    "@glandjs/events": "1.0.1-alpha",
+    "@glandjs/core": "1.0.1-alpha",
     "@medishn/toolkit": "^1.0.3",
     "tslib": "2.8.1"
   },
   "devDependencies": {
     "@types/express": "^5.0.1",
-    "@glandjs/common": "workspace:*",
+    "@glandjs/common": "1.0.1-alpha",
     "@types/cors": "^2.8.17",
     "typescript": "^5.5.4"
   },
   "peerDependencies": {
-    "@glandjs/common": "workspace:*",
+    "@glandjs/common": "1.0.1-alpha",
     "reflect-metadata": "^0.1.12"
   }
 }
