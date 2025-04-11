@@ -1,8 +1,34 @@
 {
   "name": "@glandjs/fastify",
   "version": "1.0.0-alpha",
-  "author": "Mahdi",
+  "description": "A Fastify adapter for Gland HTTP protocol layer, enabling high-performance HTTP handling within the Gland architecture solution.",
+  "author": {
+    "name": "Mahdi",
+    "url": "https://github.com/m-mdy-m"
+  },
   "license": "MIT",
+  "homepage": "https://github.com/glandjs/http#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/glandjs/http.git",
+    "directory": "packages/fastify"
+  },
+  "bugs": {
+    "url": "https://github.com/glandjs/http/issues"
+  },
+  "keywords": [
+    "gland",
+    "glandjs",
+    "fastify",
+    "http",
+    "adapter",
+    "protocol",
+    "framework",
+    "typescript",
+    "event-driven",
+    "architecture",
+    "fastify-adapter"
+  ],
   "engines": {
     "node": ">= 20"
   },
@@ -14,18 +40,18 @@
   },
   "dependencies": {
     "fastify": "^5.2.2",
-    "@glandjs/events": "workspace:*",
     "@glandjs/http": "workspace:*",
-    "@glandjs/core": "workspace:*",
+    "@glandjs/events": "1.0.1-alpha",
+    "@glandjs/core": "1.0.1-alpha",
     "@medishn/toolkit": "^1.0.3",
     "tslib": "2.8.1"
   },
   "devDependencies": {
-    "@glandjs/common": "workspace:*",
+    "@glandjs/common": "1.0.1-alpha",
     "typescript": "^5.5.4"
   },
   "peerDependencies": {
-    "@glandjs/common": "workspace:*",
+    "@glandjs/common": "1.0.1-alpha",
     "reflect-metadata": "^0.1.12"
   }
 }

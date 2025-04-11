@@ -28,9 +28,7 @@ export class ExpressAdapter extends HttpServerAdapter<
 
   public initialize(): Promise<void> | void {
     this.logger.info('Initializing Express adapter')
-    this.events.on('options', (options) => {
-      console.log('OPTIONS:', options)
-    })
+    this.events.on('options', (options) => {})
   }
   public listen(
     port: number | string,
@@ -113,7 +111,11 @@ export class ExpressAdapter extends HttpServerAdapter<
 
     return this.instance.use(...wrapped)
   }
-  public registerRoute(method: string, path: string, action: RouteAction<Request,Response>): void {
+  public registerRoute(
+    method: string,
+    path: string,
+    action: RouteAction<Request, Response>
+  ): void {
     const normalizedPath = normalizePath(path)
 
     this.instance[method.toLowerCase()](
