@@ -7,8 +7,9 @@ import {
 } from './types/app-options.types'
 import { RequestMethod } from './enum'
 import type { HttpServerAdapter } from './adapter'
-import type { CorsConfig, RouteAction } from './types'
+import type { CorsConfig, RouteAction, ServerCrashedEvent } from './types'
 import type { HttpEventType } from './http-events.const'
+import type { HttpContext } from './context'
 
 /**
  * The core HTTP server class for the Gland framework.
@@ -151,13 +152,21 @@ export class HttpCore<TServer, TApp, TRequest, TResponse> {
   ): void {
     switch (event) {
       case 'crashed':
-        this._adapter.events.on('$server:crashed', listener)
+        this._adapter.events.on(
+          '$server:crashed',
+          listener as Callback<[ServerCrashedEvent]>
+        )
         break
       case 'router:miss':
-        this._adapter.events.on('$router:miss', listener)
+        this._adapter.events.on(
+          '$router:miss',
+          listener as Callback<[HttpContext<TRequest, TResponse>]>
+        )
         break
       case 'request:failed':
-        this._adapter.events.on('$request:failed', listener)
+        this._adapter.events.on('$request:failed', ((errorAndCtx) => {
+          listener(...errorAndCtx)
+        }) as Callback<[[any, HttpContext<TRequest, TResponse>]]>)
         break
       default:
         throw Error(`Unknown system event: ${event}`)
