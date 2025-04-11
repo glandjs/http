@@ -61,9 +61,7 @@ export class FastifyAdapter extends HttpServerAdapter<
   }
   public initialize(): Promise<void> | void {
     this.logger.info('Initializing Fastify adapter')
-    this.events.on('options', (options) => {
-      console.log('OPTIONS:', options)
-    })
+    this.events.on('options', (options) => {})
   }
   public async listen(
     port: string | number,
