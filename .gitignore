@@ -16,5 +16,5 @@ packages/**/**/*.js
 .vscode/
 /packages/**/.npmignore
 /packages/**/LICENSE
-
+tsconfig.tsbuildinfo
 bin/*
