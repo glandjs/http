@@ -15,6 +15,7 @@
     "version": "changeset version",
     "release": "pnpm build && pnpm changeset publish",
     "release:alpha": "pnpm changeset publish --tag alpha",
+    "clean": "rm -rf packages/**/**/**/*.d.ts packages/**/**/*.d.ts packages/**/*.d.ts packages/**/**/**/*.js packages/**/**/*.js packages/**/*.js ",
     "build": "pnpm -r build"
   },
   "lint-staged": {
