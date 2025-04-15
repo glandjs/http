@@ -1,5 +1,4 @@
 import {
-  HttpContext,
   HttpServerAdapter,
   ServerFactory,
   type HttpApplicationOptions,
@@ -11,6 +10,7 @@ import { normalizePath } from '@glandjs/common'
 import cors from 'cors'
 import { pipeline } from 'node:stream'
 import { Server } from 'net'
+import { ExpressContext } from './context'
 export class ExpressAdapter extends HttpServerAdapter<
   Server,
   Application,
@@ -20,7 +20,7 @@ export class ExpressAdapter extends HttpServerAdapter<
   constructor() {
     super(express())
     this.instance.use((req: Request, res: Response, next: Function) => {
-      const ctx = new HttpContext(this.events, req, res)
+      const ctx = new ExpressContext(this.events, req, res)
       ;(req as any).ctx = ctx
       next()
     })
