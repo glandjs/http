@@ -6,3 +6,4 @@ export interface HttpApplicationOptions {
    */
   https?: HttpsOptions
 }
+export type ErrorCallback = (err: Error) => void
