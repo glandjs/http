@@ -121,6 +121,45 @@ export class HttpCore<TServer, TApp, TRequest, TResponse> {
   ): this => this._registerRoute(RequestMethod.OPTIONS, path, action)
   public all = (path: string, action: RouteAction<TRequest, TResponse>): this =>
     this._registerRoute(RequestMethod.ALL, path, action)
+  public search = (
+    path: string,
+    action: RouteAction<TRequest, TResponse>
+  ): this => this._registerRoute(RequestMethod.SEARCH, path, action)
+
+  public propfind = (
+    path: string,
+    action: RouteAction<TRequest, TResponse>
+  ): this => this._registerRoute(RequestMethod.PROPFIND, path, action)
+
+  public proppatch = (
+    path: string,
+    action: RouteAction<TRequest, TResponse>
+  ): this => this._registerRoute(RequestMethod.PROPPATCH, path, action)
+
+  public mkcol = (
+    path: string,
+    action: RouteAction<TRequest, TResponse>
+  ): this => this._registerRoute(RequestMethod.MKCOL, path, action)
+
+  public copy = (
+    path: string,
+    action: RouteAction<TRequest, TResponse>
+  ): this => this._registerRoute(RequestMethod.COPY, path, action)
+
+  public move = (
+    path: string,
+    action: RouteAction<TRequest, TResponse>
+  ): this => this._registerRoute(RequestMethod.MOVE, path, action)
+
+  public lock = (
+    path: string,
+    action: RouteAction<TRequest, TResponse>
+  ): this => this._registerRoute(RequestMethod.LOCK, path, action)
+
+  public unlock = (
+    path: string,
+    action: RouteAction<TRequest, TResponse>
+  ): this => this._registerRoute(RequestMethod.UNLOCK, path, action)
 
   public enableCors(options: CorsConfig) {
     this._adapter.enableCors(options)
