@@ -36,8 +36,6 @@ For the full Gland documentation, architecture overview, and usage guides:
 
 - [Official Gland Documentation](https://github.com/glandjs/gland)
 - [HTTP Layer Overview](https://github.com/glandjs/http)
-- [Express Adapter Documentation](https://github.com/glandjs/http/tree/main/packages/express)
-- [Fastify Adapter Documentation](https://github.com/glandjs/http/tree/main/packages/fastify)
 
 ## License
 

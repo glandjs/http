@@ -3,40 +3,39 @@
 </p>
 
 <p align="center">
-  <a href="https://npmjs.com/package/@glandjs/fastify" target="_blank"><img src="https://img.shields.io/npm/v/@glandjs/fastify.svg" alt="NPM Version" /></a>
-  <a href="https://npmjs.com/package/@glandjs/fastify" target="_blank"><img src="https://img.shields.io/npm/l/@glandjs/fastify.svg" alt="Package License" /></a>
-  <a href="https://npmjs.com/package/@glandjs/fastify" target="_blank"><img src="https://img.shields.io/npm/dm/@glandjs/fastify.svg" alt="NPM Downloads" /></a>
+  <a href="https://npmjs.com/package/@glandjs/express" target="_blank"><img src="https://img.shields.io/npm/v/@glandjs/express.svg" alt="NPM Version" /></a>
+  <a href="https://npmjs.com/package/@glandjs/express" target="_blank"><img src="https://img.shields.io/npm/l/@glandjs/express.svg" alt="Package License" /></a>
+  <a href="https://npmjs.com/package/@glandjs/express" target="_blank"><img src="https://img.shields.io/npm/dm/@glandjs/express.svg" alt="NPM Downloads" /></a>
 </p>
 
-<h1 align="center">@glandjs/fastify</h1>
+<h1 align="center">@glandjs/express</h1>
 
-<p align="center">A protocol adapter for Fastify within the Gland architecture solution.</p>
+<p align="center">A protocol adapter for Express within the Gland architecture solution.</p>
 
 ## Description
 
-> Fastify is not the whole app — it's just one way to handle HTTP. Gland abstracts that away.
+> Express is not your application — it's just one way to deliver HTTP. Gland abstracts that detail.
 
-**@glandjs/fastify** is the Fastify adapter for Gland's HTTP layer. It integrates the performance and modern features of Fastify with the event-driven, modular architecture of Gland.
+**@glandjs/express** is the Express adapter for Gland's HTTP layer. It allows you to integrate the simplicity and ecosystem of Express with the modular, event-driven design of Gland.
 
-This package acts as a bridge between Fastify's high-performance HTTP server and the Gland runtime. It listens to incoming HTTP requests using Fastify and converts them into internal Gland events. Similarly, it converts responses triggered by the Gland event system back into Fastify responses. This separation ensures that the core business logic remains decoupled from the underlying HTTP engine.
+This package serves as a bridge between the Express HTTP server and Gland’s internal architecture. It listens to HTTP requests via Express and transforms them into internal Gland events. Likewise, responses generated within the Gland runtime are seamlessly mapped back into Express's response format.
 
-By relying on adapter packages like this one, Gland provides the flexibility to switch between different HTTP servers (Express, Fastify, or even custom implementations) without modifying your application's internal logic.
+This separation allows your application's core logic to remain independent from the underlying HTTP server implementation, enabling protocol flexibility and better long-term maintainability.
 
 ## Philosophy
 
-The idea behind Gland's HTTP abstraction is to ensure that your application’s logic is independent of how data is transmitted over the network. **@glandjs/fastify** embraces this principle by using Fastify solely as an adapter — a translator between HTTP requests/responses and Gland's event-based messaging system.
+Gland's architectural vision is based on keeping the application's logic completely decoupled from protocol details like HTTP. **@glandjs/express** embodies this principle by treating Express purely as an adapter — translating between raw HTTP and Gland events.
 
-Fastify's proven performance and developer-friendly API are leveraged here to efficiently process HTTP requests. However, once a request enters the Gland pipeline, it is treated as a message just like any other event. This means your internal modules remain isolated from Fastify-specific logic, promoting testability and maintainability.
+Express’s intuitive API and wide ecosystem are fully supported, but once a request enters the Gland system, it’s treated just like any other event in the broker-based system. This ensures that your business logic is not tied to Express and can be reused with different protocols or servers without rewriting the core.
 
-With **@glandjs/fastify**, HTTP becomes just another channel in your application. The adapter standardizes communication by routing all HTTP-related events through Gland’s centralized broker, ensuring that your code can remain protocol-agnostic.
+With **@glandjs/express**, HTTP is just another communication channel. All events are routed through Gland's centralized broker, ensuring full protocol-agnostic behavior across your system.
 
 ## Documentation
 
-For the full Gland documentation, architecture overview, and usage guides:
+To learn more about Gland's architecture and usage:
 
 - [Official Gland Documentation](https://github.com/glandjs/gland)
 - [HTTP Layer Overview](https://github.com/glandjs/http)
-- [Fastify Adapter Documentation](https://github.com/glandjs/http/tree/main/packages/fastify)
 
 ## License
 
