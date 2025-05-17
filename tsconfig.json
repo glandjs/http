@@ -25,17 +25,14 @@
       "@glandjs/http/*": ["./packages/http/*"],
 
       "@glandjs/express": ["./packages/express"],
-      "@glandjs/express/*": ["./packages/express/*"],
-
-      "@glandjs/fastify": ["./packages/fastify"],
-      "@glandjs/fastify/*": ["./packages/fastify/*"]
+      "@glandjs/express/*": ["./packages/express/*"]
     },
     "noImplicitAny": false,
     "noUnusedLocals": false,
     "strictPropertyInitialization": false,
     "noLib": false
   },
-  "include": ["packages/**/*", "test/**/*", "examples/**/*"],
+  "include": ["packages/**/*"],
   "compileOnSave": true,
   "buildOnSave": true,
   "preserveSymlinks": true,
