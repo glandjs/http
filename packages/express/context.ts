@@ -11,14 +11,21 @@ import {
 } from '@glandjs/http'
 import type { Dictionary, HttpStatus, Maybe } from '@medishn/toolkit'
 import type { Request, Response } from 'express'
+import { EventRecord } from '@glandjs/events'
 
-export class ExpressContext extends HttpContext<Request, Response> {
-  constructor(events: HttpEventCore, req: Request, res: Response) {
+export class ExpressContext<TEvents extends EventRecord> extends HttpContext<
+  Request,
+  Response,
+  TEvents
+> {
+  constructor(events: HttpEventCore<TEvents>, req: Request, res: Response) {
     super(events, req, res)
 
     this.params = req.params
     this.host = req.host
-    this.body = req.body
+  }
+  public get body(): any {
+    return this.req.body
   }
   public get path(): string {
     return this.req.path
