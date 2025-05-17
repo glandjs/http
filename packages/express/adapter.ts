@@ -52,7 +52,7 @@ export class ExpressAdapter<
     )
     this.parserMiddleware.forEach((middleware, index) => {
       console.log(`Applying parser middleware #${index + 1}`)
-      this.instance.use(middleware)
+      this.instance.use(middleware as any)
     })
 
     this.instance.use((req: Request, res: Response, next: Function) => {
@@ -68,7 +68,7 @@ export class ExpressAdapter<
 
       const defaultMessage = `Server listening on ${hostname}:${parsedPort}`
       this.logger.info(message ?? defaultMessage)
-      this.server = ServerFactory.create(options, this.instance)
+      this.server = ServerFactory.create((options as any) || {}, this.instance)
       this.server.listen(parsedPort, hostname)
     } catch (error) {
       this.handleError(error, 'Failed to start Express server')
