@@ -1,15 +1,21 @@
 import { Logger } from '@medishn/toolkit'
 import { HttpEventCore } from './http-events'
-import { Broker } from '@glandjs/events'
 import type { CorsConfig, RouteAction } from '../types'
+import type { HttpApplicationOptions } from '../interface'
+export interface HttpGlandEvents {
+  options?: HttpApplicationOptions
+  'server:crashed': {
+    message: string
+    error: any
+    stack: any
+  }
+}
 export abstract class HttpServerAdapter<TServer, TAapp, TRequest, TResponse> {
   protected logger = new Logger({ context: 'HTTP:Adapter' })
-  public broker: Broker
-  public events: HttpEventCore
+  public events: HttpEventCore<HttpGlandEvents>
   protected server: TServer
   constructor(public instance: TAapp) {
-    this.broker = new Broker('http')
-    this.events = new HttpEventCore(this.broker.channel('http'))
+    this.events = new HttpEventCore('http')
     this.events.on('options', this.initialize.bind(this))
   }
   public abstract initialize(): Promise<void> | void
@@ -30,7 +36,7 @@ export abstract class HttpServerAdapter<TServer, TAapp, TRequest, TResponse> {
           reject(err)
           return
         }
-        this.logger.info('Express server closed')
+        this.logger.info('server closed')
         resolve()
       })
     })
@@ -44,12 +50,16 @@ export abstract class HttpServerAdapter<TServer, TAapp, TRequest, TResponse> {
 
   public abstract enableCors(options: CorsConfig): void
 
+  public abstract setViewEngine(engine: string): this
+  public abstract setBaseViewsDir(path: string | string[]): this
   public abstract setGlobalPrefix(prefix: string): void
-
   public abstract useStaticAssets(path: string, options?: any): void
-
+  public abstract json(options?: any): this
+  public abstract urlencoded(options?: { extended?: boolean }): this
+  public abstract raw(options?: any): this
+  public abstract text(options?: any): this
   public handleError(error: any, message: string) {
-    this.events.safeEmit('$server:crashed', {
+    this.events.safeEmit('server:crashed', {
       message,
       error,
       stack: error.stack,
