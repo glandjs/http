@@ -1,13 +1,11 @@
 {
   "name": "@glandjs/http",
-  "version": "1.0.0-alpha",
+  "version": "1.0.0-beta",
   "description": "Glands is a web framework for Node.js",
   "homepage": "https://github.com/glandjs/http#readme",
   "author": "Mahdi",
   "license": "MIT",
-  "workspaces": [
-    "packages/*"
-  ],
+  "workspaces": ["packages/*"],
   "scripts": {
     "test:unit": "mocha --require ts-node/register test/unit/**/*.spec.ts",
     "test:integration": "mocha --require ts-node/register test/integration/**/*.spec.ts",
@@ -15,11 +13,10 @@
     "version": "changeset version",
     "release": "pnpm build && pnpm changeset publish",
     "release:alpha": "pnpm changeset publish --tag alpha",
-    "clean": "rm -rf packages/**/**/**/*.d.ts packages/**/**/*.d.ts packages/**/*.d.ts packages/**/**/**/*.js packages/**/**/*.js packages/**/*.js ",
+    "clean": "tsc -b --clean packages",
     "build:http": "pnpm --filter @glandjs/http... build",
     "build:express": "pnpm --filter @glandjs/express... build",
-    "build:fastify": "pnpm --filter @glandjs/fastify... build",
-    "build": "pnpm run build:http && pnpm run build:express && pnpm run build:fastify"
+    "build": "pnpm run build:http && pnpm run build:express"
   },
   "lint-staged": {
     "**/*.ts": "prettier --ignore-path ./.prettierignore --write"
@@ -31,15 +28,7 @@
   "bugs": {
     "url": "https://github.com/glandjs/http/issues"
   },
-  "keywords": [
-    "gland",
-    "http",
-    "express",
-    "fastify",
-    "nodejs",
-    "web",
-    "medishn"
-  ],
+  "keywords": ["gland", "http", "express", "fastify", "nodejs", "web", "medishn"],
   "engines": {
     "node": ">= 20"
   },
@@ -58,10 +47,11 @@
     "typescript": "^5.5.4"
   },
   "dependencies": {
-    "@glandjs/common": "1.0.1-alpha",
-    "@glandjs/core": "1.0.1-alpha",
-    "@glandjs/events": "1.0.1-alpha",
-    "@medishn/toolkit": "^1.0.3",
+    "@glandjs/events": "^1.1.0",
+    "@glandjs/common": "^1.0.3-beta",
+    "@glandjs/core": "^1.0.3-beta",
+    "@medishn/toolkit": "^1.0.4",
+    "reflect-metadata": "^0.2.2",
     "tslib": "^2.8.1"
   }
 }

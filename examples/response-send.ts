@@ -1,11 +1,10 @@
-import { Channel, On } from '@glandjs/common'
-import type { ExpressContext } from '@glandjs/express'
-import type { FastifyContext } from '@glandjs/fastify'
+import { Channel, On } from "@glandjs/common";
+import type { ExpressContext } from "@glandjs/express";
 
-@Channel('response')
+@Channel("response")
 export class Response {
-  @On('send')
-  index(ctx: ExpressContext | FastifyContext) {
-    ctx.res.send('Hello World')
+  @On("send")
+  index(ctx: ExpressContext) {
+    ctx.send("Hello World");
   }
 }

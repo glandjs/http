@@ -1,6 +1,6 @@
 {
   "name": "@glandjs/http",
-  "version": "1.0.0-alpha",
+  "version": "1.0.0-beta",
   "description": "A protocol adapter for HTTP built on top of the Gland architecture solution.",
   "author": {
     "name": "Mahdi",
@@ -38,17 +38,18 @@
     "access": "public"
   },
   "dependencies": {
-    "@glandjs/core": "1.0.1-alpha",
-    "@glandjs/events": "1.0.1-alpha",
-    "@medishn/toolkit": "^1.0.3",
+    "@glandjs/events": "^1.1.0",
+    "@glandjs/core": "^1.0.3-beta",
+    "@medishn/toolkit": "^1.0.4",
+    "reflect-metadata": "^0.2.2",
     "tslib": "2.8.1"
   },
   "devDependencies": {
-    "@glandjs/common": "1.0.1-alpha",
+    "@glandjs/common": "^1.0.3-beta",
     "typescript": "^5.5.4"
   },
   "peerDependencies": {
-    "@glandjs/common": "1.0.1-alpha",
-    "reflect-metadata": "^0.1.12"
+    "@glandjs/common": "^1.0.3-beta",
+     "reflect-metadata": "^0.2.2"
   }
 }

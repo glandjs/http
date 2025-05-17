@@ -1,31 +1,43 @@
-import {
-  HttpServerAdapter,
-  ServerFactory,
-  type HttpApplicationOptions,
-} from '@glandjs/http'
+import { HttpServerAdapter, ServerFactory } from '@glandjs/http'
 import type { CorsConfig, RouteAction } from '@glandjs/http/types'
 import { isNil, isObject, isString } from '@medishn/toolkit'
 import express, { type Application, type Request, type Response } from 'express'
-import { normalizePath } from '@glandjs/common'
-import cors from 'cors'
+import { normalizePath, loadPackage } from '@glandjs/common'
+
 import { pipeline } from 'node:stream'
 import { Server } from 'net'
 import { ExpressContext } from './context'
-export class ExpressAdapter extends HttpServerAdapter<
-  Server,
-  Application,
-  Request,
-  Response
-> {
+import { EventRecord } from '@glandjs/events'
+export class ExpressAdapter<
+  TEvents extends EventRecord,
+> extends HttpServerAdapter<Server, Application, Request, Response> {
+  private parserMiddleware: Function[] = []
   constructor() {
     super(express())
-    this.instance.use((req: Request, res: Response, next: Function) => {
-      const ctx = new ExpressContext(this.events, req, res)
-      ;(req as any).ctx = ctx
-      next()
-    })
+    express.json()
+    express.urlencoded()
+    express.raw()
+    express.text()
+  }
+  public json(options?: any): this {
+    this.parserMiddleware.push(express.json(options))
+    return this
   }
 
+  public urlencoded(options?: { extended?: boolean }): this {
+    this.parserMiddleware.push(express.urlencoded(options))
+    return this
+  }
+
+  public raw(options?: any): this {
+    this.parserMiddleware.push(express.raw(options))
+    return this
+  }
+
+  public text(options?: any): this {
+    this.parserMiddleware.push(express.text(options))
+    return this
+  }
   public initialize(): Promise<void> | void {
     this.logger.info('Initializing Express adapter')
     this.events.on('options', (options) => {})
@@ -35,14 +47,24 @@ export class ExpressAdapter extends HttpServerAdapter<
     hostname: string = 'localhost',
     message?: string
   ) {
+    console.log(
+      `Applying ${this.parserMiddleware.length} parser middleware during listen`
+    )
+    this.parserMiddleware.forEach((middleware, index) => {
+      console.log(`Applying parser middleware #${index + 1}`)
+      this.instance.use(middleware)
+    })
+
+    this.instance.use((req: Request, res: Response, next: Function) => {
+      const ctx = new ExpressContext(this.events, req, res)
+      // @ts-ignore
+      req.ctx = ctx
+      next()
+    })
     try {
       const parsedPort = isString(port) ? parseInt(port, 10) : port
 
-      const options = this.events.request<HttpApplicationOptions>(
-        'options',
-        {},
-        'first'
-      )
+      const options = this.events.call('options', {})
 
       const defaultMessage = `Server listening on ${hostname}:${parsedPort}`
       this.logger.info(message ?? defaultMessage)
@@ -122,8 +144,9 @@ export class ExpressAdapter extends HttpServerAdapter<
       normalizedPath,
       async (req: Request, res: Response, next: Function) => {
         try {
-          const ctx = (req as any).ctx
-
+          // @ts-ignore
+          const ctx = req.ctx
+          ctx.params = req.params
           const result = await action(ctx)
 
           if (result !== undefined && !res.headersSent) {
@@ -137,7 +160,8 @@ export class ExpressAdapter extends HttpServerAdapter<
   }
 
   public enableCors(options: CorsConfig): void {
-    this.use(cors(options as any))
+    const cors = loadPackage('cors', 'cors is not install')
+    this.use(cors(options))
   }
 
   public set(key: string, value: any): this {

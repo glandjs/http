@@ -1,26 +1,27 @@
-import { Controller, Module, On } from '@glandjs/common'
-import { Get } from '@glandjs/http'
-import { GlandFactory } from '@glandjs/core'
-import { ExpressBroker, type ExpressContext } from '@glandjs/express'
-import { Response } from '../response-send'
+import { Controller, Module, On } from "@glandjs/common";
+import { Get } from "@glandjs/http";
+import { GlandFactory } from "@glandjs/core";
+import { ExpressBroker, type ExpressContext } from "@glandjs/express";
+import { Response } from "../response-send";
 
-@Controller('/')
+@Controller("/")
 class UserController {
   @Get()
   index(ctx: ExpressContext) {
-    ctx.emit('@response:send', ctx)
+    console.log("CTX:METHOD:", ctx.method);
+    ctx.emit("response:send", ctx);
   }
 }
 
 @Module({
   controllers: [UserController],
-  channels: [Response],
+  channels: [Response]
 })
 class AppModule {}
 
 async function bootstrap() {
-  const app = await GlandFactory.create(AppModule)
-  const express = app.connectTo(ExpressBroker)
-  express.listen(3000)
+  const app = await GlandFactory.create(AppModule);
+  const express = app.connectTo(ExpressBroker);
+  express.listen(3000);
 }
-bootstrap()
+void bootstrap();
