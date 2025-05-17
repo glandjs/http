@@ -18,3 +18,4 @@ packages/**/**/*.js
 /packages/**/LICENSE
 tsconfig.tsbuildinfo
 bin/*
+tags*
