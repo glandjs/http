@@ -27,9 +27,6 @@
     },
     {
       "path": "./express/tsconfig.json"
-    },
-    {
-      "path": "./fastify/tsconfig.json"
-    },
+    }
   ]
 }
