@@ -1,0 +1,15 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "outDir": ".",
+    "rootDir": ".",
+    "paths": {
+      "@glandjs/http": ["../http"],
+      "@glandjs/http/*": ["../http/*"]
+    }
+  },
+  "files": [],
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules", "**/*.d.ts"],
+  "references": [{ "path": "../http/tsconfig.json" }]
+}
