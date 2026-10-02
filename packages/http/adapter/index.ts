@@ -1,2 +1,2 @@
-export * from './http.adapter';
-export * from './http-events';
+export * from './http-adapter.abstract';
+export * from './http-event-broker';
