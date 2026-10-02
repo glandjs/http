@@ -2,19 +2,20 @@ import { Channel, Controller, Module, On } from '@glandjs/common';
 import { Get, HttpReply, Post } from '@glandjs/http';
 import { GlandFactory } from '@glandjs/core';
 import { HttpStatus } from '@medishn/toolkit';
-import { ExpressBroker, type ExpressContext } from '@glandjs/express';
+import { HonoBroker, type HonoRequestContext } from '@glandjs/hono';
 
 /**
- * The smallest useful Gland HTTP service.
+ * The same application as `examples/express/hello-world.ts`, on Hono.
  *
- * A controller, a module, a broker, `listen()`. There is no Express import for
- * routing and no `res` anywhere: a controller is handed a context and returns a
- * value, and the adapter works out how to write it to the socket.
+ * Hono is built on the Fetch API, so this file is the one that also runs on
+ * Cloudflare Workers, Deno Deploy, Bun and Lambda — where there is no socket to
+ * bind and the application exports `fetch` instead of calling `listen()`. See
+ * the note at the bottom.
  *
  * Run it:
  *
  * ```sh
- * npx tsx examples/express/hello-world.ts
+ * npx tsx examples/hono/hello-world.ts
  * ```
  *
  * Then:
@@ -38,12 +39,12 @@ class HelloController {
   /** `GET /` — a plain object becomes JSON. */
   @Get('/')
   index() {
-    return { name: '@glandjs/express', framework: 'express' };
+    return { name: '@glandjs/hono', framework: 'hono' };
   }
 
   /** `GET /hello/:name` — route parameters are on `ctx.params`. */
   @Get('/hello/:name')
-  hello(ctx: ExpressContext<Events>) {
+  hello(ctx: HonoRequestContext<Events>) {
     return { message: `Hello, ${ctx.params.name}!` };
   }
 
@@ -55,25 +56,31 @@ class HelloController {
    * be reused by a WebSocket, a queue consumer, or a CLI.
    */
   @Get('/sum/:a/:b')
-  async sum(ctx: ExpressContext<Events>) {
+  async sum(ctx: HonoRequestContext<Events>) {
     const total = await ctx.call('math:add', { a: Number(ctx.params.a), b: Number(ctx.params.b) });
     return { total };
   }
 
-  /** `POST /echo` — the parsed body is on `ctx.body`, once a parser is declared. */
+  /**
+   * `POST /echo` — the parsed body is on `ctx.body`.
+   *
+   * A fetch `Request` body is a one-shot stream, so the adapter reads it once in
+   * a middleware and hands the parsed value here. Without a declared parser it
+   * does not read it at all, and `ctx.body` is `undefined`.
+   */
   @Post('/echo')
-  echo(ctx: ExpressContext<Events>) {
+  echo(ctx: HonoRequestContext<Events>) {
     return ctx.body ?? { error: 'send a JSON body' };
   }
 
   /**
    * `GET /gone` — `throw()` ends the request with a problem document.
    *
-   * The status, the `Content-Type` and the RFC 7807 body are produced by the
-   * framework, not by this method.
+   * The problem becomes a fetch `Response`, so it is immutable: `throw()` works,
+   * but nothing can amend the status afterwards.
    */
   @Get('/gone')
-  gone(ctx: ExpressContext<Events>) {
+  gone(ctx: HonoRequestContext<Events>) {
     return ctx.throw(HttpStatus.GONE, { detail: 'This resource has been removed', type: 'https://errors.example.com/gone' });
   }
 
@@ -99,18 +106,15 @@ class AppModule {}
 async function main(): Promise<void> {
   const { app, shutdown } = await GlandFactory.create(AppModule);
 
-  const http = app.connectTo(ExpressBroker, {
-    poweredBy: false,
-    // Nothing is parsed until a parser is declared. Express ships `express.json`
-    // but does not mount it for you, and this is the documented default across
-    // all five adapters: a handler that expects an object should get a `415`,
-    // not `undefined`.
-    bodyParser: { json: true },
+  const http = app.connectTo(HonoBroker, {
+    // A fetch body is read once, by the adapter's own middleware, and only when a
+    // parser has been declared. Without this, `ctx.body` is `undefined` and a
+    // JSON post reaches the handler as nothing.
+    bodyParser: { json: true, urlencoded: true },
   });
 
-  // Gland middleware: a promise-based onion. `await next()` waits for the rest of
-  // the chain — see the Express adapter's notes for the one place that promise
-  // resolves early.
+  // The onion is real here — Hono's `next()` is awaited, not handed off — so the
+  // timing below measures the request rather than the middleware.
   http.use(async (ctx, next) => {
     const started = Date.now();
     await next();
@@ -119,9 +123,13 @@ async function main(): Promise<void> {
 
   http.enableCors({ origin: 'https://example.com' });
   http.listen(3000, { host: '0.0.0.0' });
+  await http.ready();
 
-  // Drain in-flight requests before exiting, so a deploy does not cut a response
-  // mid-body.
+  // On an edge runtime there is no socket to bind. `listen()` says so instead of
+  // failing, and the instance is exported so the platform can serve it:
+  //
+  //   export default http.hono;   // Cloudflare Workers, Deno, Bun
+
   const stop = async (signal: string): Promise<void> => {
     await http.close();
     await shutdown(signal);

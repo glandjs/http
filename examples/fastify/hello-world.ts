@@ -2,19 +2,19 @@ import { Channel, Controller, Module, On } from '@glandjs/common';
 import { Get, HttpReply, Post } from '@glandjs/http';
 import { GlandFactory } from '@glandjs/core';
 import { HttpStatus } from '@medishn/toolkit';
-import { ExpressBroker, type ExpressContext } from '@glandjs/express';
+import { FastifyBroker, type FastifyContext } from '@glandjs/fastify';
 
 /**
- * The smallest useful Gland HTTP service.
+ * The same application as `examples/express/hello-world.ts`, on Fastify.
  *
- * A controller, a module, a broker, `listen()`. There is no Express import for
- * routing and no `res` anywhere: a controller is handed a context and returns a
- * value, and the adapter works out how to write it to the socket.
+ * Diff the two files. The controller, the channel, the module and the middleware
+ * are byte-for-byte the same; only the import and `connectTo()` change. That is
+ * the whole argument for the adapter layer.
  *
  * Run it:
  *
  * ```sh
- * npx tsx examples/express/hello-world.ts
+ * npx tsx examples/fastify/hello-world.ts
  * ```
  *
  * Then:
@@ -38,12 +38,12 @@ class HelloController {
   /** `GET /` — a plain object becomes JSON. */
   @Get('/')
   index() {
-    return { name: '@glandjs/express', framework: 'express' };
+    return { name: '@glandjs/fastify', framework: 'fastify' };
   }
 
   /** `GET /hello/:name` — route parameters are on `ctx.params`. */
   @Get('/hello/:name')
-  hello(ctx: ExpressContext<Events>) {
+  hello(ctx: FastifyContext<Events>) {
     return { message: `Hello, ${ctx.params.name}!` };
   }
 
@@ -52,28 +52,31 @@ class HelloController {
    *
    * The controller does not import the channel. It addresses it, and the binder
    * resolves the name. That indirection is what lets one channel implementation
-   * be reused by a WebSocket, a queue consumer, or a CLI.
+   * be reused by a WebSocket, a queue consumer, or a CLI — on any of the five
+   * adapters.
    */
   @Get('/sum/:a/:b')
-  async sum(ctx: ExpressContext<Events>) {
+  async sum(ctx: FastifyContext<Events>) {
     const total = await ctx.call('math:add', { a: Number(ctx.params.a), b: Number(ctx.params.b) });
     return { total };
   }
 
-  /** `POST /echo` — the parsed body is on `ctx.body`, once a parser is declared. */
+  /**
+   * `POST /echo` — the parsed body is on `ctx.body`.
+   */
   @Post('/echo')
-  echo(ctx: ExpressContext<Events>) {
+  echo(ctx: FastifyContext<Events>) {
     return ctx.body ?? { error: 'send a JSON body' };
   }
 
   /**
    * `GET /gone` — `throw()` ends the request with a problem document.
    *
-   * The status, the `Content-Type` and the RFC 7807 body are produced by the
-   * framework, not by this method.
+   * Fastify has its own error handler, but a Gland `throw()` is already an RFC
+   * 7807 problem by the time it reaches one, so both agree.
    */
   @Get('/gone')
-  gone(ctx: ExpressContext<Events>) {
+  gone(ctx: FastifyContext<Events>) {
     return ctx.throw(HttpStatus.GONE, { detail: 'This resource has been removed', type: 'https://errors.example.com/gone' });
   }
 
@@ -99,18 +102,17 @@ class AppModule {}
 async function main(): Promise<void> {
   const { app, shutdown } = await GlandFactory.create(AppModule);
 
-  const http = app.connectTo(ExpressBroker, {
-    poweredBy: false,
-    // Nothing is parsed until a parser is declared. Express ships `express.json`
-    // but does not mount it for you, and this is the documented default across
-    // all five adapters: a handler that expects an object should get a `415`,
-    // not `undefined`.
-    bodyParser: { json: true },
+  const http = app.connectTo(FastifyBroker, {
+    // Fastify is the one framework that parses JSON whether or not it is asked
+    // to, so the adapter removes its built-in parser when nothing is declared.
+    // Declaring one keeps it, and turns on `@fastify/formbody` and
+    // `@fastify/cookie` for a form post and for `ctx.cookies`.
+    bodyParser: { json: true, urlencoded: true },
   });
 
-  // Gland middleware: a promise-based onion. `await next()` waits for the rest of
-  // the chain — see the Express adapter's notes for the one place that promise
-  // resolves early.
+  // Gland middleware becomes one composed `preHandler` hook. `await next()`
+  // really does wait for the rest of the chain — see the adapter's notes for why
+  // that is not the same thing Express does with its `next()`.
   http.use(async (ctx, next) => {
     const started = Date.now();
     await next();
@@ -120,8 +122,10 @@ async function main(): Promise<void> {
   http.enableCors({ origin: 'https://example.com' });
   http.listen(3000, { host: '0.0.0.0' });
 
-  // Drain in-flight requests before exiting, so a deploy does not cut a response
-  // mid-body.
+  // Fastify finishes loading its plugins during `ready()`, and `listen()` only
+  // awaits that much. `http.ready()` waits for the whole set.
+  await http.ready();
+
   const stop = async (signal: string): Promise<void> => {
     await http.close();
     await shutdown(signal);

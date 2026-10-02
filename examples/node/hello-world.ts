@@ -2,19 +2,19 @@ import { Channel, Controller, Module, On } from '@glandjs/common';
 import { Get, HttpReply, Post } from '@glandjs/http';
 import { GlandFactory } from '@glandjs/core';
 import { HttpStatus } from '@medishn/toolkit';
-import { ExpressBroker, type ExpressContext } from '@glandjs/express';
+import { NodeBroker, type NodeContext } from '@glandjs/node';
 
 /**
- * The smallest useful Gland HTTP service.
+ * The same application as `examples/express/hello-world.ts`, on `node:http`.
  *
- * A controller, a module, a broker, `listen()`. There is no Express import for
- * routing and no `res` anywhere: a controller is handed a context and returns a
- * value, and the adapter works out how to write it to the socket.
+ * No framework and no dependency — the router, the reply writer and the body
+ * collector are all in `@glandjs/node`. The controller below is the same one the
+ * other four examples use; only the import and `connectTo()` differ.
  *
  * Run it:
  *
  * ```sh
- * npx tsx examples/express/hello-world.ts
+ * npx tsx examples/node/hello-world.ts
  * ```
  *
  * Then:
@@ -38,12 +38,12 @@ class HelloController {
   /** `GET /` — a plain object becomes JSON. */
   @Get('/')
   index() {
-    return { name: '@glandjs/express', framework: 'express' };
+    return { name: '@glandjs/node', framework: 'node:http' };
   }
 
   /** `GET /hello/:name` — route parameters are on `ctx.params`. */
   @Get('/hello/:name')
-  hello(ctx: ExpressContext<Events>) {
+  hello(ctx: NodeContext<Events>) {
     return { message: `Hello, ${ctx.params.name}!` };
   }
 
@@ -55,14 +55,21 @@ class HelloController {
    * be reused by a WebSocket, a queue consumer, or a CLI.
    */
   @Get('/sum/:a/:b')
-  async sum(ctx: ExpressContext<Events>) {
+  async sum(ctx: NodeContext<Events>) {
     const total = await ctx.call('math:add', { a: Number(ctx.params.a), b: Number(ctx.params.b) });
     return { total };
   }
 
-  /** `POST /echo` — the parsed body is on `ctx.body`, once a parser is declared. */
+  /**
+   * `POST /echo` — the parsed body is on `ctx.body`.
+   *
+   * `bodyParser` is not the default anywhere in Gland: "no parser installed" is
+   * the safe answer, because a handler that expects an object should get a `415`
+   * rather than `undefined`. Declaring it here installs the collector, which
+   * runs first in the chain and decodes by `Content-Type`.
+   */
   @Post('/echo')
-  echo(ctx: ExpressContext<Events>) {
+  echo(ctx: NodeContext<Events>) {
     return ctx.body ?? { error: 'send a JSON body' };
   }
 
@@ -70,10 +77,10 @@ class HelloController {
    * `GET /gone` — `throw()` ends the request with a problem document.
    *
    * The status, the `Content-Type` and the RFC 7807 body are produced by the
-   * framework, not by this method.
+   * layer, not by this method.
    */
   @Get('/gone')
-  gone(ctx: ExpressContext<Events>) {
+  gone(ctx: NodeContext<Events>) {
     return ctx.throw(HttpStatus.GONE, { detail: 'This resource has been removed', type: 'https://errors.example.com/gone' });
   }
 
@@ -99,18 +106,14 @@ class AppModule {}
 async function main(): Promise<void> {
   const { app, shutdown } = await GlandFactory.create(AppModule);
 
-  const http = app.connectTo(ExpressBroker, {
+  const http = app.connectTo(NodeBroker, {
     poweredBy: false,
-    // Nothing is parsed until a parser is declared. Express ships `express.json`
-    // but does not mount it for you, and this is the documented default across
-    // all five adapters: a handler that expects an object should get a `415`,
-    // not `undefined`.
-    bodyParser: { json: true },
+    bodyParser: { limit: '1mb' },
   });
 
-  // Gland middleware: a promise-based onion. `await next()` waits for the rest of
-  // the chain — see the Express adapter's notes for the one place that promise
-  // resolves early.
+  // `node:http` has no middleware, so this adapter walks the chain itself — which
+  // makes `await next()` mean what it looks like it means. The timing log
+  // measures the request, not the middleware.
   http.use(async (ctx, next) => {
     const started = Date.now();
     await next();
@@ -119,9 +122,8 @@ async function main(): Promise<void> {
 
   http.enableCors({ origin: 'https://example.com' });
   http.listen(3000, { host: '0.0.0.0' });
+  await http.ready();
 
-  // Drain in-flight requests before exiting, so a deploy does not cut a response
-  // mid-body.
   const stop = async (signal: string): Promise<void> => {
     await http.close();
     await shutdown(signal);
