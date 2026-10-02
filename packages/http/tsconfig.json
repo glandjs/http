@@ -3,10 +3,13 @@
   "compilerOptions": {
     "outDir": ".",
     "rootDir": ".",
-    "types": ["node"]
+    "paths": {
+      "@glandjs/http": ["."],
+      "@glandjs/http/*": ["./*"]
+    }
   },
   "files": [],
   "include": ["**/*.ts"],
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules", "**/*.d.ts"],
   "references": []
 }

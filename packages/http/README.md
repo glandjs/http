@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="#" target="blank"><img src="https://github.com/glandjs/glandjs.github.io/blob/main/public/logo.png" width="200" alt="Gland Logo" /></a>
+  <a href="#" target="blank"><img src="https://github.com/glandjs/glandjs.github.io/blob/main/public/logo.png" width="160" alt="Gland Logo" /></a>
 </p>
 
 <p align="center">
@@ -10,38 +10,144 @@
 
 <h1 align="center">@glandjs/http</h1>
 
-<p align="center">A protocol layer for HTTP communication within the Gland architecture solution.</p>
+<p align="center">The framework-agnostic HTTP layer for Gland: the contracts an adapter implements, and the behaviour every adapter shares.</p>
 
 ## Description
 
-> HTTP is not your app — it’s just a protocol. Gland treats it that way.
+> What if HTTP was just another event?
 
-**@glandjs/http** is the official HTTP layer for Gland. It provides a protocol interface that listens to incoming HTTP requests and converts them into internal Gland events — allowing your application to stay decoupled from any specific networking stack or server framework.
+`@glandjs/http` contains **no server, no router and no framework import**. It is
+three things:
 
-Rather than tying your code directly to Express, Fastify, or raw HTTP servers, `@glandjs/http` acts as a bridge between your HTTP server (via an adapter) and the Gland runtime. It creates an isolated, internal channel named `http` which routes messages from incoming HTTP requests into your Gland modules and controllers — and then emits outgoing responses back through the same channel.
+- **the contracts** — what a handler may return, what a middleware is, what a
+  route is
+- **the machinery** — the request pipeline, the middleware onion, the lifecycle
+  bus, the error renderer, the CORS policy
+- **the decorators** — so a controller can declare a route without knowing how it
+  will be served
 
-The result is an elegant separation of concerns: Your core business logic doesn’t know or care where a request came from or how the response is sent. It only handles events.
+Everything that has to be identical across transports lives here. Everything that
+needs framework knowledge lives in an adapter.
 
-This package doesn’t implement any HTTP server itself. Instead, it defines the **interface** — a protocol contract — and relies on adapter packages like [`@glandjs/express`](https://npmjs.com/package/@glandjs/express) to handle the actual server lifecycle. This gives you the flexibility to plug in any HTTP engine you like, now or later.
+| Package                          | Framework   | Middleware onion | Runtime                 |
+| -------------------------------- | ----------- | ---------------- | ----------------------- |
+| [`@glandjs/express`](../express) | Express 5   | hand-off         | Node                    |
+| [`@glandjs/fastify`](../fastify) | Fastify 5   | real             | Node                    |
+| [`@glandjs/koa`](../koa)         | Koa 3       | real             | Node                    |
+| [`@glandjs/hono`](../hono)       | Hono 4      | real             | Node and the edge       |
+| [`@glandjs/node`](../node)       | `node:http` | real             | Node, zero dependencies |
 
-## Philosophy
+## Install
 
-The HTTP layer in Gland is designed to be replaceable. Gland doesn’t tie your application to a specific transport protocol or middleware engine. Whether you're using Express, Fastify, or something custom, the logic of your system remains untouched.
+```sh
+npm install @glandjs/http
+```
 
-`@glandjs/http` brings this idea to life by abstracting away the server details and focusing purely on event-based communication. HTTP becomes just another entry point into the system — a message in, a message out.
+You also need a transport, `@glandjs/core`, `@glandjs/common` and
+`reflect-metadata`.
 
-This package introduces a dedicated event channel for HTTP (`http`) and exposes a broker that routes all HTTP-related events through the Gland runtime. Every adapter connected to this layer (like Express or Fastify) becomes a plug-in that speaks the same language — one that's message-driven, modular, and completely testable.
+## Usage
 
-It’s not about reinventing HTTP — it’s about putting it in its place.
+`@glandjs/http` is used through an adapter; there is nothing to construct here
+except the decorators and the middleware.
+
+```ts
+import { Get, Post, HttpReply, HttpEvent, withErrors, bodyLimit } from '@glandjs/http';
+
+@Controller('/orders')
+class OrderController {
+  @Get('/:id')
+  async find(ctx) {
+    const order = await ctx.call('db:order:find', ctx.params.id);
+    if (!order) return ctx.throw(404, { detail: 'No such order' });
+    return order; // an object becomes JSON
+  }
+
+  @Post('/')
+  async create(ctx) {
+    return HttpReply.json(await ctx.call('db:order:create', ctx.body), { status: 201 });
+  }
+}
+```
+
+## What a handler may return
+
+One function decides, and every adapter writes the result the same way.
+
+| Returned                          | Written as                                          |
+| --------------------------------- | --------------------------------------------------- |
+| an object, array, number, boolean | `application/json`                                  |
+| a string                          | `text/plain`, or `text/html` if it sniffs as markup |
+| a `Buffer`                        | raw bytes                                           |
+| a `Readable`                      | piped to the socket                                 |
+| an `SseStream`                    | `text/event-stream`, with a heartbeat               |
+| a `HttpReply`                     | exactly what it says                                |
+| `undefined` / `null`              | nothing — the handler already answered              |
+
+That is why `return 42` means `42` on Express and on Hono rather than a JSON
+`42` on one and a bare `42` on the other.
+
+## What this package owns
+
+|                                                                       |                                                                 |
+| --------------------------------------------------------------------- | --------------------------------------------------------------- |
+| `HttpCore`                                                            | the application: routes, middleware, parsers, `listen`, `close` |
+| `HttpBroker`                                                          | what `app.connectTo()` takes; registers the binder's routes     |
+| `HttpServerAdapter`                                                   | the contract an adapter implements                              |
+| `HttpContext`                                                         | the whole request surface, abstract, and identical everywhere   |
+| `HttpReply`                                                           | an explicit reply                                               |
+| `createCorsMiddleware`                                                | one CORS policy for every adapter                               |
+| `errorHandler`, `withErrors`, `bodyLimit`                             | the error and body primitives                                   |
+| `SseStream`                                                           | a correctly framed event stream                                 |
+| `toReplyPayload`, `normalizePath`, `applyPrefix`, `parseCookieHeader` | the shared decisions                                            |
+| `Get`, `Post`, `Propfind`, …                                          | the route decorators                                            |
+
+## Errors
+
+RFC 7807 problem details, and the default renderer **drops the message of
+anything that is not an `HttpException`** — a stack trace, a SQL fragment or a
+file path in a response body is a disclosure bug. Log it on
+`http:request:error`; do not send it.
+
+```ts
+ctx.throw(404, { detail: 'No such product', type: 'https://errors.example.com/product' });
+```
+
+## Lifecycle
+
+```ts
+app.on(HttpEvent.RequestStart, ({ method, path }) => metrics.count(`${method} ${path}`));
+app.on(HttpEvent.RequestEnd, ({ method, path, status, duration }) => metrics.timing('http.request', duration, { method, path, status }));
+```
+
+`RequestEnd` fires on the failure path too, so a counter cannot leak on exactly
+the requests that failed.
+
+## Ordering
+
+Routes and middleware are both buffered and mounted together at `listen()`, in a
+fixed order — framework configuration, the middleware queue in call order,
+plugins, the routes, and finally the catch-all 404. That is what makes this work
+regardless of the order you wrote things in:
+
+```ts
+const http = app.connectTo(ExpressBroker); // ← routes arrive here
+http.use(auth); // ← middleware arrives here
+http.listen(3000); // ← everything mounts now
+```
 
 ## Documentation
 
-For the full Gland documentation, architecture overview, and usage guides:
-
-- [Official Gland Documentation](https://github.com/glandjs/gland)
-- [Express Adapter](https://github.com/glandjs/http/tree/main/packages/express)
-- [Fastify Adapter](https://github.com/glandjs/http/tree/main/packages/fastify)
+- [Architecture → Overview](../../docs/architecture/README.md) - the five ideas
+- [The adapter contract](../../docs/architecture/adapter-contract.md) - what an
+  adapter implements
+- [Writing an adapter](../../docs/architecture/writing-an-adapter.md)
+- [Replies](../../docs/guides/replies.md), [Errors](../../docs/guides/errors.md),
+  [CORS](../../docs/guides/cors.md)
+- [Lifecycle events](../../docs/guides/lifecycle-events.md) - the bus, and what
+  is worth listening to
+- [API reference](../../docs/api/README.md)
 
 ## License
 
-Licensed under the [MIT License](https://github.com/glandjs/http/blob/main/LICENSE).
+MIT

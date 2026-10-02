@@ -1,7 +1,20 @@
 {
   "name": "@glandjs/http",
-  "version": "1.0.0-beta",
-  "description": "A protocol adapter for HTTP built on top of the Gland architecture solution.",
+  "version": "1.1.0-beta",
+  "description": "The framework-agnostic HTTP layer for Gland: adapter contracts, a promise-based middleware onion, and a uniform request context.",
+  "keywords": [
+    "gland",
+    "glandjs",
+    "http",
+    "adapter",
+    "protocol",
+    "framework",
+    "framework-agnostic",
+    "middleware",
+    "typescript",
+    "architecture",
+    "event-driven"
+  ],
   "author": {
     "name": "Mahdi",
     "url": "https://github.com/m-mdy-m"
@@ -10,39 +23,26 @@
   "homepage": "https://github.com/glandjs/http#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/glandjs/http.git",
+    "url": "git+https://github.com/glandjs/http.git",
     "directory": "packages/http"
   },
   "bugs": {
     "url": "https://github.com/glandjs/http/issues"
   },
-  "keywords": [
-    "gland",
-    "http",
-    "express",
-    "adapter",
-    "protocol",
-    "framework",
-    "typescript",
-    "architecture",
-    "event-driven",
-    "glandjs"
-  ],
   "engines": {
     "node": ">= 20"
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsc -b tsconfig.json"
   },
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
-    "@glandjs/events": "^1.1.0",
     "@glandjs/core": "^1.0.3-beta",
+    "@glandjs/events": "^1.1.0",
     "@medishn/toolkit": "^1.0.4",
-    "reflect-metadata": "^0.2.2",
-    "tslib": "2.8.1"
+    "tslib": "^2.8.1"
   },
   "devDependencies": {
     "@glandjs/common": "^1.0.3-beta",
@@ -50,6 +50,6 @@
   },
   "peerDependencies": {
     "@glandjs/common": "^1.0.3-beta",
-     "reflect-metadata": "^0.2.2"
+    "reflect-metadata": "^0.2.2"
   }
 }
