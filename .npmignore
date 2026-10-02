@@ -16,5 +16,5 @@ bin
 docs
 .changeset
 .github
-exmaples
+examples
 tsconfig.tsbuildinfo

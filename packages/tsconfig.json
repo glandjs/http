@@ -1,32 +1,46 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "ES2022",
+    "lib": ["ES2022"],
     "module": "commonjs",
+    "moduleResolution": "node",
     "strict": true,
+    "strictNullChecks": true,
     "esModuleInterop": true,
-    "removeComments": true,
+    "removeComments": false,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "composite": true,
     "forceConsistentCasingInFileNames": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "useUnknownInCatchVariables": false,
     "allowJs": false,
-    "composite": true,
-    "declaration": true,
     "skipLibCheck": true,
-    "strictNullChecks": true,
     "types": ["node"],
+    "rootDir": ".",
+    "outDir": ".",
+    "paths": {
+      "@glandjs/http": ["./http"],
+      "@glandjs/http/*": ["./http/*"],
+      "@glandjs/express": ["./express"],
+      "@glandjs/express/*": ["./express/*"],
+      "@glandjs/fastify": ["./fastify"],
+      "@glandjs/fastify/*": ["./fastify/*"],
+      "@glandjs/koa": ["./koa"],
+      "@glandjs/koa/*": ["./koa/*"],
+      "@glandjs/hono": ["./hono"],
+      "@glandjs/hono/*": ["./hono/*"],
+      "@glandjs/node": ["./node"],
+      "@glandjs/node/*": ["./node/*"]
+    },
     "noImplicitAny": false,
     "noUnusedLocals": false,
-    "noLib": false,
-    "sourceMap": false,
-    "strictPropertyInitialization": false
+    "noImplicitOverride": false,
+    "strictPropertyInitialization": false,
+    "noLib": false
   },
-  "references": [
-    {
-      "path": "./http/tsconfig.json"
-    },
-    {
-      "path": "./express/tsconfig.json"
-    }
-  ]
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules", "**/*.d.ts"]
 }

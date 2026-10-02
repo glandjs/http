@@ -5,7 +5,9 @@ node_modules/
 
 # bundle
 packages/**/**/*.d.ts
+packages/**/**/*.d.ts.map
 packages/**/**/*.js
+packages/**/**/*.js.map
 
 # Environment variables
 .env

@@ -1,40 +1,38 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "CommonJS",
-    "strict": true,
-    "esModuleInterop": true,
-    "removeComments": true,
-    "composite": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "strict": false,
     "strictNullChecks": true,
+    "esModuleInterop": true,
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": false,
+    "composite": false,
     "forceConsistentCasingInFileNames": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "useUnknownInCatchVariables": false,
     "allowJs": false,
     "skipLibCheck": true,
-    "moduleResolution": "node",
-    "rootDir": ".",
-    "baseUrl": ".",
-    "types": ["node"],
+    "types": ["node", "mocha", "chai"],
+    "noEmit": true,
+    "noImplicitAny": false,
+    "noUnusedLocals": false,
+    "noImplicitOverride": false,
+    "strictPropertyInitialization": false,
     "paths": {
       "@glandjs/http": ["./packages/http"],
       "@glandjs/http/*": ["./packages/http/*"],
-
       "@glandjs/express": ["./packages/express"],
-      "@glandjs/express/*": ["./packages/express/*"]
-    },
-    "noImplicitAny": false,
-    "noUnusedLocals": false,
-    "strictPropertyInitialization": false,
-    "noLib": false
+      "@glandjs/fastify": ["./packages/fastify"],
+      "@glandjs/koa": ["./packages/koa"],
+      "@glandjs/hono": ["./packages/hono"],
+      "@glandjs/node": ["./packages/node"]
+    }
   },
-  "include": ["packages/**/*"],
-  "compileOnSave": true,
-  "buildOnSave": true,
-  "preserveSymlinks": true,
-  "exclude": ["node_modules"]
+  "include": ["examples/**/*.ts", "test/**/*.ts"],
+  "exclude": ["node_modules", "**/*.d.ts", "**/*.js"]
 }
