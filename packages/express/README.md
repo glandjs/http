@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="#" target="blank"><img src="https://github.com/glandjs/glandjs.github.io/blob/main/public/logo.png" width="200" alt="Gland Logo" /></a>
+  <a href="#" target="blank"><img src="https://github.com/glandjs/glandjs.github.io/blob/main/public/logo.png" width="160" alt="Gland Logo" /></a>
 </p>
 
 <p align="center">
@@ -10,33 +10,134 @@
 
 <h1 align="center">@glandjs/express</h1>
 
-<p align="center">A protocol adapter for Express within the Gland architecture solution.</p>
+<p align="center">The Express 5 adapter for Gland's HTTP layer.</p>
 
 ## Description
 
-> Express is not your application — it's just one way to deliver HTTP. Gland abstracts that detail.
+> Express is not your application — it is just one way to deliver HTTP. Gland
+> abstracts that detail.
 
-**@glandjs/express** is the Express adapter for Gland's HTTP layer. It allows you to integrate the simplicity and ecosystem of Express with the modular, event-driven design of Gland.
+`@glandjs/express` is the Express adapter for Gland's HTTP layer. It contributes
+an Express application, an `ExpressContext`, and nothing else — the onion, the
+request lifecycle, the reply coercion and the error rendering all come from
+`@glandjs/http`, so the same controller runs unchanged on Fastify, Koa, Hono or
+`node:http`.
 
-This package serves as a bridge between the Express HTTP server and Gland’s internal architecture. It listens to HTTP requests via Express and transforms them into internal Gland events. Likewise, responses generated within the Gland runtime are seamlessly mapped back into Express's response format.
+A controller never imports Express. A route is declared with a decorator from
+`@glandjs/http`, and the adapter works out how to write the reply to the socket.
 
-This separation allows your application's core logic to remain independent from the underlying HTTP server implementation, enabling protocol flexibility and better long-term maintainability.
+## Install
 
-## Philosophy
+```sh
+npm install @glandjs/core @glandjs/common @glandjs/http @glandjs/express reflect-metadata
+```
 
-Gland's architectural vision is based on keeping the application's logic completely decoupled from protocol details like HTTP. **@glandjs/express** embodies this principle by treating Express purely as an adapter — translating between raw HTTP and Gland events.
+## Usage
 
-Express’s intuitive API and wide ecosystem are fully supported, but once a request enters the Gland system, it’s treated just like any other event in the broker-based system. This ensures that your business logic is not tied to Express and can be reused with different protocols or servers without rewriting the core.
+```ts
+import { GlandFactory } from '@glandjs/core';
+import { ExpressBroker, type ExpressContext } from '@glandjs/express';
+import { Get } from '@glandjs/http';
+import { Controller, Module } from '@glandjs/common';
 
-With **@glandjs/express**, HTTP is just another communication channel. All events are routed through Gland's centralized broker, ensuring full protocol-agnostic behavior across your system.
+@Controller('/products')
+class ProductController {
+  @Get('/:id')
+  async find(ctx: ExpressContext) {
+    return ctx.call('db:product:find', ctx.params.id); // an object becomes JSON
+  }
+}
+
+@Module({ controllers: [ProductController] })
+class AppModule {}
+
+const { app, shutdown } = await GlandFactory.create(AppModule);
+const http = app.connectTo(ExpressBroker, { poweredBy: false });
+
+http.json();
+http.use(async (ctx, next) => {
+  const started = Date.now();
+  await next();
+  console.log(`${ctx.method} ${ctx.path} ${Date.now() - started}ms`);
+});
+http.useRaw(compression()); // framework middleware, unmolested
+
+http.listen(3000);
+```
+
+## What is different about Express
+
+**`await next()` resolves early.** Express's `next()` is a hand-off, not a call.
+The bridge resolves as soon as Express moves downstream, so an upstream
+`try`/`catch` cannot see a downstream throw. The error still reaches the error
+handler — `next(err)` is called for you — but you cannot _measure_ or _transform_
+what happened after the hand-off.
+
+```ts
+app.use(async (ctx, next) => {
+  const started = Date.now();
+  await next(); // the hand-off, not the route
+  metrics.timing('route', Date.now() - started);
+});
+```
+
+The transport-agnostic alternative, which works everywhere:
+
+```ts
+app.on(HttpEvent.RequestEnd, ({ method, path, status, duration }) => {
+  metrics.timing('http.request', duration, { method, path, status });
+});
+```
+
+**`app.use` is split in two.** Gland's `use()` is a promise-based onion;
+Express's is a synchronous hand-off. Rather than infer intent from a function's
+arity — which the previous version did, and which silently mis-typed every
+Express handler — the two are separate:
+
+```ts
+app.use((ctx, next) => …);              // Gland, on the onion
+app.useRaw(compression());              // Express, unmolested
+```
+
+**`ctx.send('done')` is `text/plain`.** Express's `res.send(string)` defaults to
+`text/html`, which would make a text reply render as a page in a browser. The
+adapter sets the type, so a string means the same thing on all five adapters.
+
+**Extended methods use a guard.** Express 5 exposes seven verbs, so `@Propfind()`
+is registered with `all()` plus a method check — a real route that works, rather
+than a `TypeError: router.propfind is not a function` at boot.
+
+## Reaching Express directly
+
+```ts
+app.instance.set('trust proxy', 1); // a setting Gland does not model
+app.set('etag', 'strong'); // the same thing, typed
+```
+
+That is the right answer for framework settings. It is the wrong answer for
+routing, body parsing or CORS, because those are the parts the abstraction owns.
+
+## API
+
+| Export                                 | Kind                                               |
+| -------------------------------------- | -------------------------------------------------- |
+| `ExpressBroker` / `ExpressBrokerClass` | What `app.connectTo()` takes                       |
+| `ExpressCore`                          | The application, with `instance` typed and `set()` |
+| `ExpressAdapter`                       | The adapter                                        |
+| `ExpressContext`                       | The context                                        |
+| `EXPRESS_VERBS`, `ExpressApp`          | Extras                                             |
+
+The full surface is in the
+[API reference](../../docs/api/README.md).
 
 ## Documentation
 
-To learn more about Gland's architecture and usage:
-
-- [Official Gland Documentation](https://github.com/glandjs/gland)
-- [HTTP Layer Overview](https://github.com/glandjs/http)
+- [Choosing an adapter](../../docs/guides/adapters.md)
+- [Middleware](../../docs/guides/middleware.md) — and the Express caveat
+- [Adapter matrix](../../docs/api/adapter-matrix.md) — what each transport can and
+  cannot do
+- [Gland architecture](https://github.com/glandjs/gland)
 
 ## License
 
-Licensed under the [MIT License](https://github.com/glandjs/http/blob/main/LICENSE).
+MIT

@@ -6,15 +6,10 @@
     "paths": {
       "@glandjs/http": ["../http"],
       "@glandjs/http/*": ["../http/*"]
-    },
-    "types": ["node"]
+    }
   },
   "files": [],
   "include": ["**/*.ts"],
-  "exclude": ["node_modules"],
-  "references": [
-    {
-      "path": "../http/tsconfig.json"
-    }
-  ]
+  "exclude": ["node_modules", "**/*.d.ts"],
+  "references": [{ "path": "../http/tsconfig.json" }]
 }
