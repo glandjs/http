@@ -1,0 +1,67 @@
+{
+  "name": "@glandjs/hono",
+  "version": "1.1.0-beta",
+  "description": "The Hono adapter for Gland's HTTP layer, for Node and for the edge runtimes Hono targets.",
+  "keywords": [
+    "gland",
+    "glandjs",
+    "hono",
+    "http",
+    "adapter",
+    "edge",
+    "cloudflare-workers",
+    "deno",
+    "bun",
+    "lambda",
+    "middleware",
+    "framework",
+    "typescript",
+    "event-driven",
+    "architecture",
+    "hono-adapter"
+  ],
+  "author": {
+    "name": "Mahdi",
+    "url": "https://github.com/m-mdy-m"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/glandjs/http#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/glandjs/http.git",
+    "directory": "packages/hono"
+  },
+  "bugs": {
+    "url": "https://github.com/glandjs/http/issues"
+  },
+  "engines": {
+    "node": ">= 20"
+  },
+  "scripts": {
+    "build": "tsc -b tsconfig.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@glandjs/core": "^1.0.3-beta",
+    "@glandjs/events": "^1.1.0",
+    "@glandjs/http": "workspace:*",
+    "@medishn/toolkit": "^1.0.4",
+    "hono": "^4.6.14",
+    "tslib": "^2.8.1"
+  },
+  "devDependencies": {
+    "@glandjs/common": "^1.0.3-beta",
+    "@hono/node-server": "^1.13.7",
+    "typescript": "^5.5.4"
+  },
+  "peerDependencies": {
+    "@glandjs/common": "^1.0.3-beta",
+    "@hono/node-server": "^1.13.7",
+    "reflect-metadata": "^0.2.2"
+  },
+  "peerDependenciesMeta": {
+    "@hono/node-server": { "optional": true }
+  }
+}
