@@ -1,6 +1,6 @@
 {
   "name": "@glandjs/koa",
-  "version": "1.1.0-beta",
+  "version": "1.0.0",
   "description": "The Koa 3 adapter for Gland's HTTP layer: a Koa instance, a Koa context, and nothing else.",
   "keywords": [
     "gland",
@@ -41,7 +41,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@glandjs/core": "^1.0.3-beta",
+    "@glandjs/core": "^2.0.0",
     "@glandjs/events": "^1.1.0",
     "@glandjs/http": "workspace:*",
     "@koa/router": "^13.1.0",
@@ -50,11 +50,11 @@
     "tslib": "^2.8.1"
   },
   "devDependencies": {
-    "@glandjs/common": "^1.0.3-beta",
+    "@glandjs/common": "^2.0.0",
     "typescript": "^5.5.4"
   },
   "peerDependencies": {
-    "@glandjs/common": "^1.0.3-beta",
+    "@glandjs/common": "^2.0.0",
     "koa-bodyparser": "^4.4.1",
     "koa-static": "^5.0.0",
     "reflect-metadata": "^0.2.2"

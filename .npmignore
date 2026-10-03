@@ -4,6 +4,14 @@
 !**/*.d.ts
 !*.d.ts
 
+# Per-package changelogs. The published history lives in docs/CHANGELOG.md and on
+# npm; the per-package files are for people working in this repository.
+#
+# npm evaluates these patterns relative to the package being packed, so the path
+# is bare here even though the file lives at packages/<name>/CHANGELOG.md.
+CHANGELOG.md
+**/CHANGELOG.md
+
 tsconfig.json
 .prettierrc
 .prettierignore
@@ -17,4 +25,5 @@ docs
 .changeset
 .github
 examples
+test
 tsconfig.tsbuildinfo

@@ -104,14 +104,18 @@ http.on(RouterEvent.ROUTER_REGISTER, …);
 http.on(HttpEvent.RouteRegistered, …);
 ```
 
-The unprefixed strings (`'router:register'`) are still accepted by `on()`. What
-is gone is the ability to _subscribe_ to middleware execution as a separate
-event — it is part of the request now, and `http:request:end` covers it.
+The unprefixed strings (`'router:register'`) are **not** accepted by `on()`.
+`HttpCore.on()` and `off()` are typed against `keyof (TEvents & HttpEventRecord) & string`,
+which is the `http:*` set, so the old names do not compile. What is gone is the
+ability to _subscribe_ to middleware execution as a separate event — it is part
+of the request now, and `http:request:end` covers it.
 
 ## `useStaticAssets` on `@glandjs/node`
 
-It was a no-op — the adapter ignored the option. It now queues a wildcard route.
-If you served nothing and thought you did, you now serve it.
+It was a silent no-op — the adapter ignored the option. It is no longer silent:
+the argument is recorded and then reported as unsupported, because a raw
+`node:http` adapter has nothing to mount a static handler on. Serve static files
+yourself, or use an adapter that has a static implementation.
 
 ## Transports that need a decision, not a code change
 

@@ -1,6 +1,6 @@
 {
   "name": "@glandjs/http",
-  "version": "1.1.0-beta",
+  "version": "2.0.0",
   "description": "The framework-agnostic HTTP layer for Gland: adapter contracts, a promise-based middleware onion, and a uniform request context.",
   "keywords": [
     "gland",
@@ -39,17 +39,17 @@
     "access": "public"
   },
   "dependencies": {
-    "@glandjs/core": "^1.0.3-beta",
+    "@glandjs/core": "^2.0.0",
     "@glandjs/events": "^1.1.0",
     "@medishn/toolkit": "^1.0.4",
     "tslib": "^2.8.1"
   },
   "devDependencies": {
-    "@glandjs/common": "^1.0.3-beta",
+    "@glandjs/common": "^2.0.0",
     "typescript": "^5.5.4"
   },
   "peerDependencies": {
-    "@glandjs/common": "^1.0.3-beta",
+    "@glandjs/common": "^2.0.0",
     "reflect-metadata": "^0.2.2"
   }
 }

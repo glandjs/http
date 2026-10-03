@@ -1,6 +1,6 @@
 {
   "name": "@glandjs/hono",
-  "version": "1.1.0-beta",
+  "version": "1.0.0",
   "description": "The Hono adapter for Gland's HTTP layer, for Node and for the edge runtimes Hono targets.",
   "keywords": [
     "gland",
@@ -44,7 +44,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@glandjs/core": "^1.0.3-beta",
+    "@glandjs/core": "^2.0.0",
     "@glandjs/events": "^1.1.0",
     "@glandjs/http": "workspace:*",
     "@medishn/toolkit": "^1.0.4",
@@ -52,12 +52,12 @@
     "tslib": "^2.8.1"
   },
   "devDependencies": {
-    "@glandjs/common": "^1.0.3-beta",
+    "@glandjs/common": "^2.0.0",
     "@hono/node-server": "^1.13.7",
     "typescript": "^5.5.4"
   },
   "peerDependencies": {
-    "@glandjs/common": "^1.0.3-beta",
+    "@glandjs/common": "^2.0.0",
     "@hono/node-server": "^1.13.7",
     "reflect-metadata": "^0.2.2"
   },

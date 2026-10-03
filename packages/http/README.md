@@ -52,7 +52,7 @@ You also need a transport, `@glandjs/core`, `@glandjs/common` and
 except the decorators and the middleware.
 
 ```ts
-import { Get, Post, HttpReply, HttpEvent, withErrors, bodyLimit } from '@glandjs/http';
+import { Get, Post, HttpReply, HttpEvent, withErrors, bodyLimitMiddleware } from '@glandjs/http';
 
 @Controller('/orders')
 class OrderController {
@@ -97,7 +97,7 @@ That is why `return 42` means `42` on Express and on Hono rather than a JSON
 | `HttpContext`                                                         | the whole request surface, abstract, and identical everywhere   |
 | `HttpReply`                                                           | an explicit reply                                               |
 | `createCorsMiddleware`                                                | one CORS policy for every adapter                               |
-| `errorHandler`, `withErrors`, `bodyLimit`                             | the error and body primitives                                   |
+| `errorHandler`, `withErrors`, `bodyLimitMiddleware`                   | the error and body primitives                                   |
 | `SseStream`                                                           | a correctly framed event stream                                 |
 | `toReplyPayload`, `normalizePath`, `applyPrefix`, `parseCookieHeader` | the shared decisions                                            |
 | `Get`, `Post`, `Propfind`, …                                          | the route decorators                                            |
