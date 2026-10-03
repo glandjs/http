@@ -57,20 +57,6 @@
   "engines": {
     "node": ">= 20"
   },
-  "pnpm": {
-    "overrides": {
-      "@glandjs/core": "link:../gland/packages/core",
-      "@glandjs/common": "link:../gland/packages/common",
-      "@glandjs/events": "^1.1.0"
-    },
-    "peerDependencyRules": {
-      "allowedVersions": {
-        "@glandjs/core": "*",
-        "@glandjs/common": "*",
-        "@glandjs/events": "*"
-      }
-    }
-  },
   "devDependencies": {
     "@changesets/cli": "^2.28.1",
     "@fastify/cookie": "^11.0.2",

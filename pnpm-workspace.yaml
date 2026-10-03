@@ -1,4 +1,16 @@
 packages:
   - 'packages/*'
+
 allowBuilds:
   esbuild: false
+
+overrides:
+  '@glandjs/core': 'link:../gland/packages/core'
+  '@glandjs/common': 'link:../gland/packages/common'
+  '@glandjs/events': '^1.1.0'
+
+peerDependencyRules:
+  allowedVersions:
+    '@glandjs/core': '*'
+    '@glandjs/common': '*'
+    '@glandjs/events': '*'
