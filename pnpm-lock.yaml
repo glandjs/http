@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  '@glandjs/core': link:../gland/packages/core
+  '@glandjs/common': link:../gland/packages/common
+  '@glandjs/events': ^1.1.0
+
 importers:
 
   .:
@@ -21,11 +26,11 @@ importers:
         specifier: ^8.1.1
         version: 8.3.0
       '@glandjs/common':
-        specifier: ^1.0.3-beta
-        version: 1.0.3-beta(reflect-metadata@0.2.2)
+        specifier: link:../gland/packages/common
+        version: link:../gland/packages/common
       '@glandjs/core':
-        specifier: ^1.0.3-beta
-        version: 1.0.3-beta(@glandjs/common@1.0.3-beta(reflect-metadata@0.2.2))(reflect-metadata@0.2.2)
+        specifier: link:../gland/packages/core
+        version: link:../gland/packages/core
       '@glandjs/events':
         specifier: ^1.1.0
         version: 1.1.2
@@ -113,9 +118,12 @@ importers:
 
   packages/express:
     dependencies:
+      '@glandjs/common':
+        specifier: link:../../../gland/packages/common
+        version: link:../../../gland/packages/common
       '@glandjs/core':
-        specifier: ^1.0.3-beta
-        version: 1.0.3-beta(@glandjs/common@1.0.3-beta(reflect-metadata@0.2.2))(reflect-metadata@0.2.2)
+        specifier: link:../../../gland/packages/core
+        version: link:../../../gland/packages/core
       '@glandjs/events':
         specifier: ^1.1.0
         version: 1.1.2
@@ -135,9 +143,6 @@ importers:
         specifier: ^2.8.1
         version: 2.8.1
     devDependencies:
-      '@glandjs/common':
-        specifier: ^1.0.3-beta
-        version: 1.0.3-beta(reflect-metadata@0.2.2)
       '@types/express':
         specifier: ^5.0.1
         version: 5.0.1
@@ -147,9 +152,12 @@ importers:
 
   packages/fastify:
     dependencies:
+      '@glandjs/common':
+        specifier: link:../../../gland/packages/common
+        version: link:../../../gland/packages/common
       '@glandjs/core':
-        specifier: ^1.0.3-beta
-        version: 1.0.3-beta(@glandjs/common@1.0.3-beta(reflect-metadata@0.2.2))(reflect-metadata@0.2.2)
+        specifier: link:../../../gland/packages/core
+        version: link:../../../gland/packages/core
       '@glandjs/events':
         specifier: ^1.1.0
         version: 1.1.2
@@ -178,18 +186,18 @@ importers:
       '@fastify/static':
         specifier: ^8.1.1
         version: 8.3.0
-      '@glandjs/common':
-        specifier: ^1.0.3-beta
-        version: 1.0.3-beta(reflect-metadata@0.2.2)
       typescript:
         specifier: ^5.5.4
         version: 5.8.3
 
   packages/hono:
     dependencies:
+      '@glandjs/common':
+        specifier: link:../../../gland/packages/common
+        version: link:../../../gland/packages/common
       '@glandjs/core':
-        specifier: ^1.0.3-beta
-        version: 1.0.3-beta(@glandjs/common@1.0.3-beta(reflect-metadata@0.2.2))(reflect-metadata@0.2.2)
+        specifier: link:../../../gland/packages/core
+        version: link:../../../gland/packages/core
       '@glandjs/events':
         specifier: ^1.1.0
         version: 1.1.2
@@ -209,9 +217,6 @@ importers:
         specifier: ^2.8.1
         version: 2.8.1
     devDependencies:
-      '@glandjs/common':
-        specifier: ^1.0.3-beta
-        version: 1.0.3-beta(reflect-metadata@0.2.2)
       '@hono/node-server':
         specifier: ^1.13.7
         version: 1.19.17(hono@4.13.12)
@@ -221,9 +226,12 @@ importers:
 
   packages/http:
     dependencies:
+      '@glandjs/common':
+        specifier: link:../../../gland/packages/common
+        version: link:../../../gland/packages/common
       '@glandjs/core':
-        specifier: ^1.0.3-beta
-        version: 1.0.3-beta(@glandjs/common@1.0.3-beta(reflect-metadata@0.2.2))(reflect-metadata@0.2.2)
+        specifier: link:../../../gland/packages/core
+        version: link:../../../gland/packages/core
       '@glandjs/events':
         specifier: ^1.1.0
         version: 1.1.2
@@ -237,18 +245,18 @@ importers:
         specifier: ^2.8.1
         version: 2.8.1
     devDependencies:
-      '@glandjs/common':
-        specifier: ^1.0.3-beta
-        version: 1.0.3-beta(reflect-metadata@0.2.2)
       typescript:
         specifier: ^5.5.4
         version: 5.8.3
 
   packages/koa:
     dependencies:
+      '@glandjs/common':
+        specifier: link:../../../gland/packages/common
+        version: link:../../../gland/packages/common
       '@glandjs/core':
-        specifier: ^1.0.3-beta
-        version: 1.0.3-beta(@glandjs/common@1.0.3-beta(reflect-metadata@0.2.2))(reflect-metadata@0.2.2)
+        specifier: link:../../../gland/packages/core
+        version: link:../../../gland/packages/core
       '@glandjs/events':
         specifier: ^1.1.0
         version: 1.1.2
@@ -277,18 +285,18 @@ importers:
         specifier: ^2.8.1
         version: 2.8.1
     devDependencies:
-      '@glandjs/common':
-        specifier: ^1.0.3-beta
-        version: 1.0.3-beta(reflect-metadata@0.2.2)
       typescript:
         specifier: ^5.5.4
         version: 5.8.3
 
   packages/node:
     dependencies:
+      '@glandjs/common':
+        specifier: link:../../../gland/packages/common
+        version: link:../../../gland/packages/common
       '@glandjs/core':
-        specifier: ^1.0.3-beta
-        version: 1.0.3-beta(@glandjs/common@1.0.3-beta(reflect-metadata@0.2.2))(reflect-metadata@0.2.2)
+        specifier: link:../../../gland/packages/core
+        version: link:../../../gland/packages/core
       '@glandjs/events':
         specifier: ^1.1.0
         version: 1.1.2
@@ -305,9 +313,6 @@ importers:
         specifier: ^2.8.1
         version: 2.8.1
     devDependencies:
-      '@glandjs/common':
-        specifier: ^1.0.3-beta
-        version: 1.0.3-beta(reflect-metadata@0.2.2)
       typescript:
         specifier: ^5.5.4
         version: 5.8.3
@@ -565,19 +570,6 @@ packages:
 
   '@fastify/static@8.3.0':
     resolution: {integrity: sha512-yKxviR5PH1OKNnisIzZKmgZSus0r2OZb8qCSbqmw34aolT4g3UlzYfeBRym+HJ1J471CR8e2ldNub4PubD1coA==}
-
-  '@glandjs/common@1.0.3-beta':
-    resolution: {integrity: sha512-ZaXguJA8toaCjOPEArZxuvMWeFIJTXaEmo44LIqS3QEa6Yj8tzhOFckzlOx5goXQ3DU6CubA8siwOk+9JRWvBw==}
-    engines: {node: '>= 20', typescript: '>=5'}
-    peerDependencies:
-      reflect-metadata: ^0.2.2
-
-  '@glandjs/core@1.0.3-beta':
-    resolution: {integrity: sha512-jehULBH91gCWTVbxGyTnCVgtZQ4HKmBxsXdCE+Pn0KXmbOpIU21MaP7phz6Y4iTcAHEognzjanofbb6tTZEgsg==}
-    engines: {node: '>=20.0.0', typescript: '>=5.0.0'}
-    peerDependencies:
-      '@glandjs/common': 1.0.3-beta
-      reflect-metadata: ^0.2.2
 
   '@glandjs/emitter@1.1.4':
     resolution: {integrity: sha512-wx1LHWSENH3yN/adRH6V/9xvE/dDAlyLkoaynfLMQLrZCUbsr1cutiJZK6oZ1/wtIPW9FI4v8fqem+pBPZgBvQ==}
@@ -2395,20 +2387,6 @@ snapshots:
       fastify-plugin: 5.1.0
       fastq: 1.19.1
       glob: 11.1.0
-
-  '@glandjs/common@1.0.3-beta(reflect-metadata@0.2.2)':
-    dependencies:
-      '@medishn/toolkit': 1.0.4
-      reflect-metadata: 0.2.2
-      tslib: 2.8.1
-
-  '@glandjs/core@1.0.3-beta(@glandjs/common@1.0.3-beta(reflect-metadata@0.2.2))(reflect-metadata@0.2.2)':
-    dependencies:
-      '@glandjs/common': 1.0.3-beta(reflect-metadata@0.2.2)
-      '@glandjs/events': 1.1.2
-      '@medishn/toolkit': 1.0.4
-      reflect-metadata: 0.2.2
-      tslib: 2.8.1
 
   '@glandjs/emitter@1.1.4': {}
 
